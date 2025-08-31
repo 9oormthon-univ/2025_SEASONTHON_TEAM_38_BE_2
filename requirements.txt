@@ -1,0 +1,7 @@
+fastapi==0.111.0
+uvicorn==0.30.0
+openai==1.35.7
+python-dotenv==1.0.1
+chromadb==0.5.3
+PyPDF2==3.0.1
+pandas==2.2.2
