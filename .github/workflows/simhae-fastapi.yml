@@ -34,6 +34,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/2025_SEASONTHON_TEAM_38_BE_2
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
             echo "VECTOR_DB_DIR=/home/ec2-user/vector_store" >> .env
             export RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}
