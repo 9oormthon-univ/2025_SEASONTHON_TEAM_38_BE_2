@@ -3,7 +3,7 @@ name: SIMHAE CI/CD
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build-deploy:
