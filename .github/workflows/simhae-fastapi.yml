@@ -34,6 +34,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/2025_SEASONTHON_TEAM_38_BE_2
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+            echo "VECTOR_DB_DIR=/home/ec2-user/vector_store" >> .env
             export RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}
             export DB_USERNAME=${{ secrets.DB_USERNAME }}
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
