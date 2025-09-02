@@ -22,3 +22,6 @@ langchain-community==0.3.29
 
 # Vector DB
 chromadb==0.5.3
+
+# PDF 처리
+PyMuPDF==1.26.4
