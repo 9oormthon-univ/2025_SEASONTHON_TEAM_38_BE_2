@@ -19,6 +19,7 @@ numpy==1.26.4
 openai==1.102.0
 langchain==0.3.27
 langchain-community==0.3.29
+tiktoken==0.4.0
 
 # Vector DB
 chromadb==0.5.3
