@@ -1,4 +1,6 @@
 import json
+import logging
+from typing import List, Dict
 from openai import OpenAI
 from app.models.dtos import (
     OverallAnalysisResponse,
@@ -23,6 +25,7 @@ def analyze_overall(request: DreamAnalyzeRequest) -> OverallAnalysisResponse:
 
     # 2. RAG 검색: 입력과 유사한 문서 top K 검색
     retrieved_docs = vector_db_search(content, k=settings.TOP_K)
+    log_vector_search(content, retrieved_docs)
 
     # 3. 프롬프트 생성: 검색 결과와 입력을 기반으로 GPT에게 전달할 프롬프트 구성
     prompt = build_overall_prompt(content, retrieved_docs)
@@ -60,7 +63,9 @@ def analyze_unconscious(request: UnconsciousAnalyzeRequest) -> UnconsciousAnalys
     # 3. RAG 검색: 각 꿈 텍스트마다 관련 문서 검색 후 합치기
     retrieved_docs = []
     for text in dream_texts_list:
-        retrieved_docs.extend(vector_db_search(text, k=settings.TOP_K))
+        docs_for_text = vector_db_search(text, k=settings.TOP_K)
+        log_vector_search(text, docs_for_text)
+        retrieved_docs.extend(docs_for_text)
 
     # 4. 프롬프트 생성: 결합된 꿈 텍스트와 검색 결과로 GPT 프롬프트 구성
     prompt = build_unconscious_prompt(dream_texts, retrieved_docs)
@@ -81,3 +86,18 @@ def analyze_unconscious(request: UnconsciousAnalyzeRequest) -> UnconsciousAnalys
 
     # 7. 출력: UnconsciousAnalysisResponse 객체 생성 및 반환
     return UnconsciousAnalysisResponse(analysis=data["analysis"])
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def log_vector_search(prompt: str, retrieved_docs: List[Dict]):
+    """
+    Vector DB 검색 시 전달된 프롬프트와 검색 결과를 로그로 기록
+    """
+    logger.info("=== Vector DB Search Log Start ===")
+    logger.info("Prompt sent to Vector DB / GPT:")
+    logger.info(prompt)
+    logger.info("Retrieved Documents (Top K):")
+    for i, doc in enumerate(retrieved_docs, 1):
+        logger.info(f"{i}. Text: {doc[:100]}...")
+    logger.info("=== Vector DB Search Log End ===")
