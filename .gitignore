@@ -11,5 +11,4 @@ venv/
 .venv/
 
 # Data
-app/data/
 vector_store/
