@@ -16,12 +16,17 @@ class UnconsciousAnalyzeRequest(BaseModel):
     recentDreamAnalyses: List[str]
 
 class UnconsciousAnalysisResponse(BaseModel):
+    title: str
     analysis: str
+    suggestion: str
+
+class OverallUnconsciousResponse(BaseModel):
+    analysis: str  # overall에서는 analysis만 필요
 
 class SuggestionResponse(BaseModel):
     suggestion: str
 
 class OverallAnalysisResponse(BaseModel):
     restate: DreamRestateResponse
-    unconscious: UnconsciousAnalysisResponse
+    unconscious: OverallUnconsciousResponse
     suggestion: SuggestionResponse
