@@ -50,8 +50,6 @@ def build_overall_prompt(content: str, context_docs: List[Document], category_co
 - 위 값 중 하나를 선택해서 JSON의 "category" 필드에 넣으세요
 - category 값은 반드시 영어 코드 형태로 작성
 """
-    import logging
-    logging.info("=== GPT Prompt Preview ===\n%s", prompt)
 
     return prompt
 
