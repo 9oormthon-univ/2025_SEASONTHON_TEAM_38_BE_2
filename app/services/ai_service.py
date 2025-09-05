@@ -13,6 +13,7 @@ from app.models.dtos import (
 from app.db.vector_store import vector_db_search
 from app.utils.prompt_builder import build_overall_prompt, build_unconscious_prompt
 from app.core.config import settings
+from app.core.category_loader import load_categories
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -27,8 +28,11 @@ def analyze_overall(request: DreamAnalyzeRequest) -> OverallAnalysisResponse:
     retrieved_docs = vector_db_search(content, k=settings.TOP_K)
     log_vector_search(content, retrieved_docs)
 
+    categories = load_categories("app/data/dream_categories.csv")
+    category_codes = [c["category_code"] for c in categories]
+
     # 3. 프롬프트 생성: 검색 결과와 입력을 기반으로 GPT에게 전달할 프롬프트 구성
-    prompt = build_overall_prompt(content, retrieved_docs)
+    prompt = build_overall_prompt(content, retrieved_docs, category_codes)
 
     # 4. GPT 호출: Chat Completions API 호출
     response = client.chat.completions.create(
