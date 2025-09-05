@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-deploy:
+    if: github.repository == 'bum0w0/2025_SEASONTHON_TEAM_38_BE_2' || github.repository == 'YUSEONU/2025_SEASONTHON_TEAM_38_BE_2'
     runs-on: ubuntu-latest
 
     steps:
