@@ -8,7 +8,7 @@ from app.models.dtos import (
     UnconsciousAnalysisResponse,
     SuggestionResponse,
     DreamAnalyzeRequest,
-    UnconsciousAnalyzeRequest
+    UnconsciousAnalyzeRequest, OverallUnconsciousResponse
 )
 from app.db.vector_store import vector_db_search
 from app.utils.prompt_builder import build_overall_prompt, build_unconscious_prompt
@@ -49,7 +49,7 @@ def analyze_overall(request: DreamAnalyzeRequest) -> OverallAnalysisResponse:
     # 6. 출력: OverallAnalysisResponse 객체 생성 및 반환
     return OverallAnalysisResponse(
         restate=DreamRestateResponse(**data["restate"]),
-        unconscious=UnconsciousAnalysisResponse(**data["unconscious"]),
+        unconscious=OverallUnconsciousResponse(analysis=data["unconscious"]["analysis"]),
         suggestion=SuggestionResponse(**data["suggestion"])
     )
 
@@ -83,21 +83,30 @@ def analyze_unconscious(request: UnconsciousAnalyzeRequest) -> UnconsciousAnalys
     )
 
     # 6. JSON 파싱: ```json``` 제거 후 JSON으로 변환
-    content = response.choices[0].message.content
+    content = response.choices[0].message.content.strip()
+
     if content.startswith("```json"):
-        content = content[len("```json"):].rstrip("```").strip()
-    data = json.loads(content)
+        content = content.replace("```json", "").replace("```", "").strip()
+
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        print("GPT 원문 응답:", content)
+        raise
 
     # 7. 출력: UnconsciousAnalysisResponse 객체 생성 및 반환
-    return UnconsciousAnalysisResponse(analysis=data["analysis"])
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+    return UnconsciousAnalysisResponse(
+        analysis=data.get("analysis", ""),
+        title=data.get("title", ""),
+        suggestion=data.get("suggestion", "")
+    )
 
 def log_vector_search(prompt: str, retrieved_docs: List[Dict]):
     """
     Vector DB 검색 시 전달된 프롬프트와 검색 결과를 로그로 기록
     """
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
     logger.info("=== Vector DB Search Log Start ===")
     logger.info("Prompt sent to Vector DB / GPT:")
     logger.info(prompt)
