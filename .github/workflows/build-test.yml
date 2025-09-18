@@ -15,8 +15,5 @@ jobs:
 
       - name: Dockerfile Lint & Build Check
         run: |
-          # Spring Boot Dockerfile
-          docker build --no-cache --pull -t simhae-springboot-test -f Dockerfile .
-          
-          # nginx Dockerfile (nginx 폴더 안에 있음)
-          docker build --no-cache --pull -t simhae-nginx-test -f nginx/Dockerfile .
+          # FastAPI Dockerfile
+          docker build --no-cache --pull -t simhae-fastapi-test -f Dockerfile .
