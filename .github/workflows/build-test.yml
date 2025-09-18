@@ -1,0 +1,22 @@
+name: SIMHAE Build & Test
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Dockerfile Lint & Build Check
+        run: |
+          # Spring Boot Dockerfile
+          docker build --no-cache --pull -t simhae-springboot-test -f Dockerfile .
+          
+          # nginx Dockerfile (nginx 폴더 안에 있음)
+          docker build --no-cache --pull -t simhae-nginx-test -f nginx/Dockerfile .

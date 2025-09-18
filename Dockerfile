@@ -15,4 +15,5 @@ COPY . .
 EXPOSE 8000
 
 # 6. FastAPI 실행
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD echo "OPENAI_API_KEY=${OPENAI_API_KEY}" > .env && \
+    uvicorn app.main:app --host 0.0.0.0 --port 8000
